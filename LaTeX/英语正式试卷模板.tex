@@ -1,0 +1,389 @@
+\documentclass[11pt,twoside]{article}
+
+\usepackage{xeCJK}%使用xeCJK中文处理宏包
+\usepackage{CJKnumb}%中文小写数字
+\usepackage{amsmath,amssymb}%ams数学符号
+\usepackage{calc}%使用四则运算宏包
+\usepackage{intcalc}%使用mod,感谢qingkuan大神指导
+\usepackage{ifthen}%使用条件判断宏包
+\usepackage{zref-user}
+\usepackage{zref-lastpage}%使用zref宏包,引用数字标签值和LastPage标签,感谢qingkuan大神指导
+%\usepackage{refcount}%使用refcount宏包,引用数字标签值,已改用zref宏包实现,感谢qingkuan大神指导
+\usepackage{makecell}
+\usepackage{interfaces-makecell}%使用interfaces-makecell宏包,制作列数可变表格,感谢qingkuan大神指导
+\usepackage{dashrule}%使用虚线宏包
+\usepackage{parskip}%段落无缩进宏包
+%\usepackage{graphicx}%使用图形包
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+\setCJKmainfont{Adobe Song Std L}%中文默认字体:adobe 宋体
+\newcommand{\heiti}{\CJKfontspec{Adobe Heiti Std R}}%adobe 黑体
+\newcommand{\fs}{\CJKfontspec{Adobe Fangsong Std R}}%adobe 仿宋
+\newcommand{\kai}{\CJKfontspec{Adobe Kaiti Std R}}%adobe 楷体
+%小16开纸,两面合起来就是8开试卷
+\usepackage[paperwidth=195mm,paperheight=270mm,left=23mm,right=17mm,top=20mm,bottom=20mm,includefoot]{geometry}
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+\usepackage{fancyhdr}%使用页眉页脚宏包
+\pagestyle{fancy}
+%
+%用到的长度变量
+\newlength{\wot}%所有表格每列宽度
+\newlength{\wol}%所有横线的宽度
+\newlength{\gmw}%gutter margin width 装订线页眉外侧超宽位置
+\newlength{\dl}%dash length横线长
+%
+%长度变量的初始值
+\settowidth{\wot}{复核人}%所有表格每列宽度初始值为"复核人"三字的宽度
+\setlength{\wol}{0.3pt}%所有横线宽度初始值为0.3pt
+\setlength{\gmw}{6em}%装订线页眉外侧超宽5em
+\setlength{\dl}{10em}%横线长10em
+%
+%
+%页眉设置开始
+\renewcommand{\headrulewidth}{0pt}%无页眉线
+%装订线开始
+%在所有页绘出装订线,奇数页在左,偶数页在右,长为\textheight,虚线形式
+%使用小页环境,环境宽度为1.1\textheight,感谢qingkuan大神指导
+\fancyheadoffset[OL,ER]{\gmw}
+\fancyhead[OL]{%
+\ifnum\intcalcMod{\value{page}}{4}=1%intcalc宏包用法,感谢qingkuan大神指导
+\rotatebox{90}%4的倍数加1页打印系,年级/班级,姓名,学号和过线提示
+{\begin{minipage}{1.1\textheight}%
+\begin{center}
+系：\rule[-.2ex]{\dl}{\wol} 班级：\rule[-.2ex]{\dl}{\wol} 姓名：\rule[-.2ex]{\dl}{\wol} 学号：\rule[-.2ex]{\dl}{\wol}\\
+\tiny \hdashrule[-3ex]{\textheight}{\wol}{3pt}\\[\smallskipamount]%
+\makebox[0.6\textheight][s]{装订线内不要答题}\\[-3\smallskipamount]%感谢Liam0205大神建议,确实好看多了
+\hdashrule[-3ex]{\textheight}{\wol}{3pt}%
+\end{center}
+\end{minipage} }
+\fi
+}
+\fancyhead[ER]{%
+\ifnum\intcalcMod{\value{page}}{4}=0%intcalc宏包用法,感谢qingkuan大神指导
+\rotatebox{-90}%4的倍数页打印过线提示
+{\begin{minipage}{1.1\textheight}%
+\begin{center}
+\tiny \hdashrule[-3ex]{\textheight}{\wol}{3pt}\\[\smallskipamount]%
+\makebox[0.6\textheight][s]{装订线内不要答题}\\[-3\smallskipamount]%感谢Liam0205大神建议,确实好看多了
+\hdashrule[-3ex]{\textheight}{\wol}{3pt}%
+\end{center}
+\end{minipage} }
+\fi
+}
+%装订线结束
+%页眉设置结束
+%
+%
+%页脚设置开始
+\renewcommand{\footrulewidth}{\wol}%页脚线宽\wol
+%总页数标志改用zref宏包实现,感谢qingkuan大神
+\fancyfoot[C]{\large{\kai 英语测试\qquad 共\zpageref{LastPage}页\quad 第\thepage 页}}%adobe kaiti
+%页脚设置结束
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+%选择题选项开始
+%参考了盖鹤麟大神选择题选项设置的代码,感谢大神的工作
+\newcommand{\fourch}[4]{\hspace*{2em}\begin{tabular}{*{4} {@{} p{0.25\textwidth}}} A、#1 & B、#2 & C、#3 & D、#4 \end{tabular}}
+\newcommand{\twoch}[4]{\hspace*{2em}\begin{tabular}{*{2} {@{} p{0.5\textwidth}}} A、#1 & B、#2\\ \end{tabular} \hspace*{2em}\begin{tabular}{*{2} {@{} p{0.5\textwidth}}}C、#3 & D、#4 \end{tabular}}
+\newcommand{\onech}[4]{\hspace*{2em} A、#1 \\\hspace*{2em} B、#2 \\\hspace*{2em} C、#3 \\\hspace*{2em} D、#4}
+%
+
+%参考了盖鹤麟大神选择题选项设置的代码,感谢大神的工作
+\newcommand{\fourchz}[4]{\begin{tabular}{*{4} {@{} p{0.25\textwidth}}} A、#1 & B、#2 & C、#3 & D、#4 \end{tabular}}
+\newcommand{\twochz}[4]{\hspace*{2em}\begin{tabular}{*{2} {@{} p{0.5\textwidth}}} A、#1 & B、#2\\ \end{tabular} \hspace*{2em}\begin{tabular}{*{2} {@{} p{0.5\textwidth}}}C、#3 & D、#4 \end{tabular}}
+\newcommand{\onechz}[4]{\hspace*{2em} A、#1 \\\hspace*{2em} B、#2 \\\hspace*{2em} C、#3 \\\hspace*{2em} D、#4}
+%
+
+%定义命令\ch{*}{*}{*}{*},只需输入四个选项内容,根据选项的最大宽度自动选择最合适排版形式
+%特别情况下,可用\fourch,\twoch,\onech手动调整
+\newlength{\cha}%选项1长度
+\newlength{\chb}%选项2长度
+\newlength{\chc}%选项3长度
+\newlength{\chd}%选项4长度
+\newlength{\maxw}%选项最大宽度
+\newcommand{\ch}[4]%命令函数,根据选项的最大宽度自动选择最合适排版形式
+{%
+\settowidth{\cha}{#1}
+\settowidth{\chb}{#2}
+\settowidth{\chc}{#3}
+\settowidth{\chd}{#4}
+\setlength{\maxw}{\cha}
+\ifthenelse{\lengthtest{\chb > \maxw}}{\setlength{\maxw}{\chb}}{}
+\ifthenelse{\lengthtest{\chc > \maxw}}{\setlength{\maxw}{\chc}}{}
+\ifthenelse{\lengthtest{\chd > \maxw}}{\setlength{\maxw}{\chd}}{}
+\ifthenelse{\lengthtest{\maxw > 0.4\textwidth}}%
+{\onech{#1}{#2}{#3}{#4} }%超过1/2文本宽排四行
+{%
+    \ifthenelse{\lengthtest{\maxw >0.2\textwidth}}{\twoch{#1}{#2}{#3}{#4}}%超过1/4文本宽不超过1/2文本宽,排两行
+    {\fourch{#1}{#2}{#3}{#4} }%不超过1/4文本宽,排一行
+}%
+}
+
+%
+%定义命令\ch{*}{*}{*}{*},只需输入四个选项内容,根据选项的最大宽度自动选择最合适排版形式
+%特别情况下,可用\fourch,\twoch,\onech手动调整
+
+\newcommand{\chz}[4]%命令函数,根据选项的最大宽度自动选择最合适排版形式
+{%
+\settowidth{\cha}{#1}
+\settowidth{\chb}{#2}
+\settowidth{\chc}{#3}
+\settowidth{\chd}{#4}
+\setlength{\maxw}{\cha}
+\ifthenelse{\lengthtest{\chb > \maxw}}{\setlength{\maxw}{\chb}}{}
+\ifthenelse{\lengthtest{\chc > \maxw}}{\setlength{\maxw}{\chc}}{}
+\ifthenelse{\lengthtest{\chd > \maxw}}{\setlength{\maxw}{\chd}}{}
+\ifthenelse{\lengthtest{\maxw > 0.4\textwidth}}%
+{\onech{#1}{#2}{#3}{#4} }%超过1/2文本宽排四行
+{%
+    \ifthenelse{\lengthtest{\maxw >0.2\textwidth}}{\twoch{#1}{#2}{#3}{#4}}%超过1/4文本宽不超过1/2文本宽,排两行
+    {\fourchz{#1}{#2}{#3}{#4} }%不超过1/4文本宽,排一行
+}%
+}
+
+%选择题选项结束
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+%用到的计数器
+\newcounter{ns}%number of sections 大题序号
+\newcounter{ts}%total sections总大题数,总计分表列数为总大题数+3
+\newcounter{nq}%number of questions 小题序号
+\newcounter{tempnum}%number of questions 完形填空临时序号
+\newcommand{\wns}{\stepcounter{ns}\CJKnumber{\thens}、}%输出大题序号,为"中文小写数字、"形式
+\newcommand{\wq}{\stepcounter{nq}\thenq.\quad}%输出小题序号,为"阿拉伯数字.空格"形式
+\newcommand{\wqz}{\quad\stepcounter{nq}\thenq\quad}%输出小题序号,为"空格 阿拉伯数字 空格"形式
+%
+%
+%大题前计分表格
+%\newcommand{\tbs}{\begin{tabular}{|c|c|c|}\hline \makebox[\wot]{得分}&\makebox[\wot]{评卷人}&\makebox[\wot]{复核人}\\ \hline
+% & &\\ \hline\end{tabular}}
+%排版大题前计分表格,序号,题型,大题说明
+%用小页环境环境排版大题前的计分表格,环境宽度为4.6\wot
+%用小页环境排版大题序号,题型,黑体;大题说明,默认字体,环境宽度为文本宽度-6\wot
+%\ws{*}{*}有2个必选参数,参数1为大题题型,参数2为大题说明
+\newcommand{\ws}[2]{\raisebox{-4ex}{\begin{minipage}[b]{4.6\wot}\end{minipage}}%输出大题前计分表,下沉4个X字符高度,可调整
+\begin{minipage}[t]{\textwidth-6\wot} {\heiti \wns #1 } #2 \end{minipage} }%输出大题序号,题型,大题说明,
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+%利用zref宏包传递大题数目值,以自动生成卷首总计分表,特别感谢qingkuan大神!真心佩服!
+%需要编译两次才能得到正确结果,第一次编译默认大题数目值为3
+\makeatletter
+\zref@newprop{totalsections}[3]{\arabic{ns}}
+\zref@addprop{LastPage}{totalsections}
+\AtBeginDocument{%
+\setcounter{ts}{\zref@extractdefault{LastPage}{totalsections}{3}} }
+\makeatother
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+\linespread{1.618}%行扩展
+%画一条下沉0.2ex,长12em,宽度为0.5pt的下横线(多用于填空):\rule[-.2ex]{12em}{.5pt}
+%画任意长横线填充\hrulefill,以任意长点线填充\dotfill
+%以任意水平空白填充\hfill,以任意竖直空白填充\vfill
+\newcommand{\D}{\,\mathrm{d}}%直立微分符号,前面含一个小空格
+\newcommand{\E}{\mathrm{e}}%直立常数e
+\newcommand{\dlim}{\displaystyle \lim }%大号极限符号
+\newcommand{\dint}{\displaystyle \int }%大号积分符号
+\newcommand{\sets}[1]{\{ #1 \}}%输出集合符号
+%====================================================================================================%
+%
+%
+%****************************************************************************************************%
+%****************************************************************************************************%
+%                                          特别鸣谢
+%感谢bbs.ctex.org论坛qingkuan大神耐心指导,才能做出尽量完善的结果.
+%同时感谢的还有盖鹤麟,Liam0205,ollydbg等大神.
+%                                   向Don E.Knuth大神致敬!
+%                                                         zalois
+%                                                        2015.1.11
+%****************************************************************************************************%
+%****************************************************************************************************%
+%
+%
+%====================================================================================================%
+\begin{document}
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+%试卷头开始
+%
+%试卷标题开始
+\begin{center}
+{\heiti\Large 上海中学2015/2016学年第一学期\\英语测试试卷\\}%adobe heiti
+\end{center}
+%试卷标题结束
+%
+%输出"绝密"字样
+%{\heiti 绝密$\bigstar$启用前}\\[-4\bigskipamount]%缩短"绝密"字样与总计分表之间的距离
+%
+\begin{center}
+%
+%试卷适用年级班级,波浪线可用\thicksim或\sim输入
+(高三年级)\\[\bigskipamount]
+%
+%根据大题数目自动生成计分总表
+%总计分表格开始
+%总计分表格的列数为总大题数+3,需要编译两次才能得到正确表格,第一次编译默认为3大题
+\newcounter{tc}%总计分表列数
+\newcounter{tcsr}%总计分表第二行重复列数
+%\setcounter{ts}{\getrefbykeydefault{nos}{}{3}}%利用末页标签nos返回总大题数目,需编译两次才能得到正确大题数目,第一次编译默认为3大题,特别感谢qingkuan大神耐心指导!
+\setcounter{tc}{\value{ts}+3}%总计分表列数比大题数多3
+\setcounter{tcsr}{\value{tc}-1}%总计分表第二行重复列数为总列数-1
+%
+\arrayrulewidth=2\wol %表格线宽为普通横线宽的2倍
+%
+\begin{tabular}{|*{\thetc}{c|}}
+\hline
+\makebox[\wot]{题号} & \repeatcell {\thets}{%
+rows=1,
+text=\makebox[\wot]{\CJKnumber{\column}}
+} &\makebox[\wot]{总分} &\makebox[\wot]{复核人} \\ \hline
+得分&\repeatcell{\thetcsr}{%
+rows=1,
+end=\\ \hline} \\
+\hline
+\end{tabular}
+%总分表格结束
+%
+\end{center}
+%
+%试卷头结束
+%====================================================================================================%
+%
+\addvspace{3\bigskipamount}%试卷头与试卷正文之间留3\bigskipamount空白
+%
+%====================================================================================================%
+%试卷正文开始
+%
+%
+\ws{单项填空}{(共20小题，每小题1分，共20分)}
+
+{从A、B、C和D四个选项中，选出可以填入空白处的最佳选项，并在答题纸上将该选项标号涂黑。}
+
+%\setcounter{nq}{0}
+\newcommand{\dq}{\dotfill(\qquad)\\} %输出点填充和括号,可用于选择题
+
+\wq Unlike the earth, Mars is too cold and Venus is far too hot \underline{\quad} there to be any life.\\
+\ch{as}{so}{like}{for}
+
+%
+%
+\ws{完形填空}{(共20小题，每小题1分，共20分)}
+
+{阅读下面短文，掌握其大意，然后从21-40各题所给的四个选项（A、B、C和D）中，选出最佳选项，并在答题纸上将该选项标号涂黑。}
+
+%画一条下沉0.2ex,长12em,宽度为0.5pt的下横线(多用于填空):\rule[-.2ex]{12em}{.5pt}
+\newcommand{\dd}{\rule[-.2ex]{2em}{.5pt}}%可用\dd命令输出填空题的横线
+\newcommand{\ddz}{\underline{\wqz}}%可用\dd命令输出填空题的横线
+%小题序号从1重新开始
+%\setcounter{nq}{0}
+\setcounter{tempnum}{\thenq}
+
+In a world where comparisons happen non-stop, it is difficult to look outside yourself and to ever be   \ddz   with who you are. There’s always someone who’s a bit   \ddz  . The only solution is to reach   \ddz   and measure against what Warren Buffett calls your own inner yardstick. There is no more   \ddz   measure for comparison than who your were yesterday, last week or last decade, when you were at your   \ddz  .
+Nothing useful ever comes from comparison to others. Either you see yourself as better than someone and you get   \ddz  , or you see someone else as better than you and you feel like all your hard work is for   \ddz  . It is a fool’s game. Not one of us is exactly   \ddz  . The only direct and honest comparison is   \ddz   yourself. Everything else is apples to oranges.
+My opinion is that you are only   \ddz   to compare yourself to someone else if their life   \ddz   is the same as your own. Good luck finding that   \ddz  . And one thing is for sure. No matter how hard you work and how dedicated（埋头苦干的）you are, there will always be someone who can run a little faster, jump a little higher, score a little better or look a little nicer in a swimsuit. And if there’s not, you can   \ddz   someone is coming up fast   \ddz   you. So how can you always win in life? Become your best   \ddz  .
+Having an image of your most recent past limits is the perfect thing to   \ddz   you to the next level. If you ran 7 flights of stairs yesterday, then do 8 today. Who   \ddz   if the guy next to you did 15? It doesn’t make a bit of   \ddz  . You are a more   \ddz   person today than you were yesterday. Your own   \ddz   is all you need.
+
+\setcounter{nq}{\thetempnum}
+
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+\wq\chz{patient}{strict}{content}{concerned}
+
+%
+%
+\ws {阅读理解}{(第一节20小题，第二节5小题；每小题2分，满分50分)}
+
+{阅读下列材料，从每题所给的四个选项（A、B、C和D）中，选出最佳选项， 并在答题纸上将该选项标号涂黑。}
+
+%可用\vfill命令隔开小题之间距离,分页尽量用\clearpage或\cleardoublepage命令
+%小题序号从1重新开始
+%\setcounter{nq}{0}
+
+A new book written by a Chinese American on her super-strict parenting - "Battle Hymn of the Tiger Mother" has raised fierce debates in the US.
+Amy Chua is a Yale Law School professor and the mother of two teenage girls. She is the daughter of Chinese immigrants. In the Chinese culture, the tighter represents strength and power. In her book, Ms. Chua writes about how she demanded excellence from her daughters. Chua writes that her daughters, Sophia and Louisa, were never allowed to go on a date, be in a school play, watch TV or play computer games. They couldn't choose their own after-class activities or get any grade less than an A. They had to play piano or violin - and no other musical instruments.
+
+%
+%
+
+\ws {短文改错}{(共10小题；每小题1分，满分10分)}
+
+{下面短文中有10处语言错误。请在有错误的地方增加、删除或修改某个单词。
+增加：在缺词处加一个漏字符号（∧），并在其下面写上该加的词。
+删除：把多余的词用斜线（＼）划掉。
+修改：在错的词下划一横线， 并在该词下面写上修改后的词。
+
+注意： 1. 每处错误及其修改均仅限一词;
+       2. 只允许修改10处, 多者 ( 从第11处起 ) 不计分。
+
+例如：It was very nice to get your invitation to spend ∧ weekend with you. Luckily I 
+                                         the
+was completely free then, so I’ll to say “yes”. I’ll arrive in Bristol at around 8 pm in Friday.
+am   
+}
+
+%
+%
+
+\ws {书面表达}{(满分30分)}
+
+{
+请你以“The World is Getting Smaller”为题，写一篇短文。\\
+要点：
+1. 我们都感觉到现在的世界变得越来越小。\\
+2. 分析这种感觉的原因。\\
+注意：词数100-120。\\
+}
+
+%
+%
+
+%\clearpage
+\mbox{}
+%
+%
+%试卷正文结束
+%====================================================================================================%
+%
+%
+%====================================================================================================%
+%返回总大题数,以自动生成总计分表,需要使用refcount宏包,已改用zref宏包实现,感谢qingkuan大神
+%\setcounter{ns}{\value{ns}-1}
+%\refstepcounter{ns}%将计数器的当前值加1并作为其后书签\label命令的值,在别处可以用\ref命令引用计数器值
+%\label{nos}%总大题数标签
+%====================================================================================================%
+%尾页标志,统计试卷总页数,可用\pageref{end}引用,也可用lastpage宏包,已改用zref宏包实现,感谢qingkuan大神
+%\label{end}
+%====================================================================================================%
+\end{document}
+%====================================================================================================%

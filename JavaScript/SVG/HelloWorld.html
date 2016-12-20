@@ -1,0 +1,14 @@
+<html>
+  <body>
+    <canvas id="test"></canvas>
+    <script type="text/javascript">
+      var canvas = document.getElementById("test"); 
+      if(canvas.getContext){
+      	var context = canvas.getContext("2d");//绘制一个2D绘图环境
+      	context.fillStyle = "#ccc";	//颜色是#ccc的图形
+      	context.fillRect(0,0,50,50);	//fillRect绘制的是一个宽高各50的填充长方形
+       	context.clearRect(30,30,10,10);	//clearRect()是清除画布区域的一部分
+      } 
+    </script> 
+  </body>
+</html>

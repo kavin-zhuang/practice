@@ -1,0 +1,674 @@
+################################################################################
+# 编辑时小心一点!
+################################################################################
+
+################################################################################
+#
+# 公共编译选项
+#
+##
+
+#GCC工具链版本
+TOOLCHAIN := GCC_4_6_3
+
+#源代码路径
+SRCROOT := .
+
+#测试模块
+TEST_DIR := 
+#TEST_DIR := 
+
+#SUBDIRS := $(subst ./,,$(shell find $(SRCROOT) -path ./$(Output) -prune -o -type d -print))
+#SUBDIRS := $(subst CVS,,$(SUBDIRS))
+#SUBDIRS := $(subst ./,,$(shell find $(SRCROOT) \\\( -path ./$(Output) -o -path ./h \\\) -prune -o -type d -print))
+#SUBDIRS :=  . ./arch
+
+
+#库文件名称
+PRJ_NAME=libvarWatch.a
+
+CLB_COMM := ../ClbCommon
+
+#版本号
+MODULE_VERSION := -DMODULE_VERSION="\"5.0\""
+
+#子版本号
+MODULE_SUBVERSION := -DMODULE_SUBVERSION="\"SP5Beta\""
+
+MODULE_FLAGS := -DINCLUDE_UNAME
+
+#该标志用于区分网络协议栈版本，当使用ipnet2-6.9时，开启以下选项
+EXTRA_FLAG := -DUSE_REWORKS_IPNET_69
+
+#头文件路径
+PUBLIC_CFLAGS := $(MODULE_VERSION) $(MODULE_SUBVERSION) $(MODULE_FLAGS) $(EXTRA_FLAG)\
+		-I"$(REDE_HOME)/user resource/posix_config/runtimelib\h" \
+		-I"$(REDE_HOME)/user resource/io_config/runtimelib\h" \
+		-I"$(CLB_COMM)/h" -I"$(CLB_COMM)/h/Arch"  -I"$(CLB_COMM)/h/Libc"\
+		-I"$(REDE_HOME)/resource/RTOS_config/runtimelib/h" \
+		-I"$(REDE_HOME)/resource/symtbl_config/runtimelib/h" 
+		
+#优化选项
+OPTIMIZED_FLAGS := -O0 -g
+
+#其余编译选项
+EXTRA_CFLAGS :=
+
+#编译的体系结构
+#CPU := PPC604_SMP
+#CPU := PENTIUM
+#CPU := ARMv7
+CPU := ARMv7_SMP
+
+TARGETDIR := $(CPU)
+
+#是否支持新网络协议栈
+#NET := OLD
+NET := NEW
+
+#是否支持多核(UC/SMP/AMP)
+#CORE := SMP
+#CORE := UC
+
+################################################################################
+#
+# 各平台编译选项
+#
+##
+ifeq "$(CPU)" "PENTIUM"
+SUBDIRS += ./arch/x86
+
+CC := i386-elf-gcc -march=pentium -DCPU=PENTIUM -D__i386__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h"
+
+TARGETDIR := PENTIUM
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := i386-elf-ar
+endif
+
+ifeq "$(CPU)" "SIM"
+SUBDIRS += ./arch/x86
+
+CC := sim-elf-gcc -march=pentium -DCPU=PENTIUM -D__i386__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h"
+
+TARGETDIR := SIM
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := sim-elf-ar
+endif
+
+ifeq "$(CPU)" "PPC603"
+SUBDIRS += ./arch/ppc
+
+CC := ppc-elf-gcc -mcpu=603 -DCPU=PPC603 -D__PPC__ -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPCE300"
+SUBDIRS += ./arch/ppc
+
+CC := ppc-elf-gcc -mcpu=603e -DCPU=PPC603 -D__PPC__ -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+
+ifeq "$(CPU)" "PPCE500"
+SUBDIRS += ./arch/ppc
+
+CC := ppc-elf-gcc -mcpu=8540 -DCPU=PPC85XX -msoft-float -D__PPC__ -G0  
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPCE500V2"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -r_e500v2 -DCPU=PPC85XX -D__PPC__  -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPCE500V2_SMP"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -r_e500v2 -DCPU=PPC85XX -D__multi_core__ -G0 -D__PPC__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := SMP
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPCE500SF"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -r_e500sf -DCPU=PPC85XX -D__PPC__  -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPCE500MC_SMP"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -mcpu=e500mc -DCPU=PPC85XX -D__multi_core__ -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := SMP
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPC604"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -mcpu=604 -DCPU=PPC604 -D__PPC__ -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+ifeq "$(CPU)" "PPC604_SMP"
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -mcpu=604 -DCPU=PPC604 -D__multi_core__ -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := SMP
+
+AR := ppc-elf-ar
+endif
+
+
+ifeq "$(CPU)" "ARMv4"
+SUBDIRS += ./arch/arm
+CC := arm-elf-gcc -DCPU=ARMARCH4 -mcpu=arm9tdmi -D__arm__ -D_CPU_ARM_
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "ARM926EJ-S"
+CC := arm-elf-gcc -r_arm926ej-s -D__arm__ -D_CPU_ARM_
+SUBDIRS += ./arch/arm
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h"  
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "CORTEX-A8"
+CC := arm-elf-gcc -r_cortex-a8 -DCPU=ARMARCH7 -D__arm__ -D_CPU_ARM_
+SUBDIRS += ./arch/arm
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "ARMv5"
+SUBDIRS += ./arch/arm
+CC := arm-elf-gcc -DCPU=ARMARCH4 -mcpu=arm9tdmi -D__arm__ -D_CPU_ARM_
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "ARMv7"
+#SUBDIRS += ./arch/arm
+CC :=arm-elf-gcc -DCPU=ARMARCH5 -r_armv7 -D__arm__ -D_CPU_ARM_ 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/RTOS_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "ARMv7_SMP"
+#SUBDIRS += ./arch/arm
+CC :=arm-elf-gcc -DCPU=ARMARCH5 -r_armv7 -D__arm__ -D_CPU_ARM_ 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/RTOS_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := arm-elf-ar
+endif
+
+ifeq "$(CPU)" "MIPS3"
+
+SUBDIRS += ./arch/mips
+
+CC := mipsel-elf-gcc -mips3 -D__loongson2__ -DCPU=MIPS32 -G0 -D__MIPS32__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := MIPS3
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "MIPS64"
+CC := mipsel-elf-gcc -mabi=o64 -mips3 -D__loongson2_64__ -DCPU=MIPS64 -G0 -D__MIPS64__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "MIPS64_N32"
+
+CC := mipsel-elf-gcc -mabi=n32 -mips3 -D__loongson2_64__  -DCPU=MIPS64 -G0 -D__MIPS64__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/MIPS64/h" 
+
+TARGETDIR := MIPS64
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "MIPS64_N32_0XXA2F"
+
+CC := mipsel-elf-gcc -mabi=n32 -mips3 -D__loongson2_64__  -DLOONGSON2F -DCPU=MIPS64 -G0 -D__MIPS64__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := LOONGSON2F
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "MIPS64_N32_0XXA3A"
+
+CC := mipsel-elf-gcc -mabi=n32 -mips3 -D__loongson2_64__  -DLOONGSON3A_SMP -DCPU=MIPS64 -G0 -D__MIPS64__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := LOONGSON3A_SMP
+
+TOOL := $(CPU)
+
+CORE := SMP
+
+AR := mipsel-elf-ar
+endif
+
+
+
+ifeq "$(CPU)" "PPC860"
+
+SUBDIRS += ./arch/ppc
+CC := ppc-elf-gcc -mcpu=860 -DCPU=PPC860 -msoft-float -G0 
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := ppc-elf-ar
+endif
+
+# 自制GCC 4.6.3工具链的龙芯平台专门编译配置
+
+# 参照原MIPS3，只是将-mips3换成-r_loongson1a
+ifeq "$(CPU)" "LOONGSON1A"
+SUBDIRS += ./arch/mips
+
+CC := mipsel-elf-gcc -r_loongson1a -D__loongson2__ -DCPU=MIPS32 -G0 -D__MIPS32__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := MIPS3
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "LOONGSON1B"
+SUBDIRS += ./arch/mips
+
+CC := mipsel-elf-gcc -r_loongson1b -D__loongson2__ -DCPU=MIPS32 -G0 -D__MIPS32__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := LOONGSON1B
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+ifeq "$(CPU)" "LOONGSON2H"
+SUBDIRS += ./arch/mips
+CC := mipsel-elf-gcc -r_loongson3a -D__loongson2_64__ -DCPU=MIPS64 -G0 -D__MIPS64__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := LOONGSON2H
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+# 参照原MIPS64_N32，只是将-mabi=n32 -mips3换成-r_loongson2f
+ifeq "$(CPU)" "LOONGSON2F"
+CC := mipsel-elf-gcc -r_loongson2f -D__loongson2_64__  -DCPU=MIPS64 -G0 -D__MIPS64__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+
+TARGETDIR := MIPS64
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+# 参照原MIPS64_N32，只是将-mabi=n32 -mips3换成-r_loongson3a
+ifeq "$(CPU)" "LOONGSON3A"
+SUBDIRS += ./arch/mips
+CC := mipsel-elf-gcc -r_loongson3a -D__loongson2_64__  -DLOONGSON3A_SMP -DCPU=MIPS64 -G0 -D__MIPS64__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TOOL := $(CPU)
+TARGETDIR := LOONGSON3A_SMP_32
+
+CORE := SMP
+
+AR := mipsel-elf-ar
+endif
+
+# 参照原MIPS3，只是将-mips3换成-r_loongson3a_32
+ifeq "$(CPU)" "LOONGSON3A_32"
+endif
+
+ifeq "$(CPU)" "LOONGSON3A_SMP"
+CC := mipsel-elf-gcc -r_loongson3a -D__loongson3__  -DCPU=MIPS64 -G0 -D__MIPS64__  -D__multi_core__
+SUBDIRS += ./arch/mips
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" \
+		-I"$(REDE_HOME)/resource/symtbl_config/runtimelib/h" 
+		
+CORE := SMP
+
+AR := mipsel-elf-ar
+endif
+ifeq "$(CPU)" "LOONGSON3A_SMP_32"
+SUBDIRS += ./arch/mips
+CC := mipsel-elf-gcc -r_loongson3a_32 -D__loongson3__ -DLOONGSON3A_SMP -DCPU=MIPS32 -G0 -D__MIPS32__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := MIPS3
+
+CORE := SMP
+
+TOOL := $(CPU)
+
+AR := mipsel-elf-ar
+endif
+
+# 参照原MIPS3，只是将-mips3换成-r_loongson2f_32
+ifeq "$(CPU)" "LOONGSON2F_32"
+SUBDIRS += ./arch/mips
+CC := mipsel-elf-gcc -r_loongson2f_32 -D__loongson2__ -DLOONGSON2F -DCPU=MIPS32 -G0 -D__MIPS32__
+
+CFLAGS := \
+		-I"$(REDE_HOME)/resource/reworks_config/runtimelib/$(CPU)/h" 
+
+TARGETDIR := LOONGSON2F_32
+
+TOOL := $(CPU)
+
+CORE := UC
+
+AR := mipsel-elf-ar
+endif
+
+################################################################################
+#
+# 其他编译选项
+#
+##
+
+ifeq "${NET}" "NEW"
+EXTRA_CFLAGS += \
+		-I"$(REDE_HOME)/user resource/vx_config/runtimelib\h" \
+        -I"$(REDE_HOME)/user resource/ipnet_config/runtimelib/h" \
+        -I"$(REDE_HOME)/user resource/ipnet_config/runtimelib/h/ip" \
+		-D__CLB_NEW_NET__
+else
+EXTRA_CFLAGS += \
+		-I"$(REDE_HOME)/user resource/net_config/runtimelib\h" 
+endif
+
+# -D__multi_core__ 是reworks核心smp需要的宏
+ifeq "${CORE}" "SMP"
+EXTRA_CFLAGS += \
+		-D__CLB_CONFIG_SMP__ -D__multi_core__
+endif
+
+PUBLIC_CFLAGS += ${EXTRA_CFLAGS}
+
+###################################
+#下面的不要进行修改
+###################################
+
+RM := rm -rf
+CP := cp
+
+##编译输出文件夹
+Output := output
+
+#如果加""会导致全部重编
+FinalOutput := $(Output)/$(CPU)/
+
+#汇编源代码
+S_SRCS:=$(shell find $(SRCROOT) -maxdepth 1 -name "\*.s")
+
+S_OBJS:=$(S_SRCS:.s=.o)
+
+S_OBJS:=$(subst ./,$(FinalOutput),$(S_OBJS))
+
+#C源代码
+C_SRCS:= $(shell find $(SUBDIRS) -maxdepth 1 -name  "\*.c")
+
+C_OBJS:=$(C_SRCS:.c=.o)
+
+C_OBJS:=$(subst ./,$(FinalOutput),$(C_OBJS))
+
+#C++源代码
+CXX_SRCS:=$(shell find $(SRCROOT) -name  "\*.cpp")
+
+CXX_OBJS:=$(CXX_SRCS:.cpp=.o)
+
+CXX_OBJS:=$(subst ./,$(FinalOutput),$(CXX_OBJS))
+
+OBJS := $(S_OBJS) $(C_OBJS) $(CXX_OBJS)
+
+DEPS:=$(OBJS:.o=.d)
+
+-include $(DEPS)
+
+#所有目标
+all: $(FinalOutput)$(PRJ_NAME) 
+
+dir: 
+	(test -d $(Output) || mkdir -p $(Output))
+	(test -d $(FinalOutput) || mkdir -p $(FinalOutput))
+	$(foreach val,$(SUBDIRS),(test -d $(FinalOutput)$(val) || mkdir $(FinalOutput)$(val));)
+ 
+
+# 工具调用
+$(FinalOutput)$(PRJ_NAME): $(OBJS)
+	@echo_rede '构建目标: $@'
+	@echo_rede '调用: GCC Archiver'
+	$(AR) -r $@ $(OBJS)
+	cp $@ ../../user\ resource/varWatch_config/runtimelib/$(CPU)/lib/
+	@echo_rede '完成构建目标: $@'
+	@echo_rede ' '
+
+$(FinalOutput)%.o: %.s
+	@echo_rede '构建文件: $<'
+	@echo_rede '调用: GCC C Compiler'
+	$(CC) -x assembler-with-cpp -c $(OPTIMIZED_FLAGS) $(PUBLIC_CFLAGS) $(CFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	@echo_rede '完成构建: $<'
+	@echo_rede ' '	
+	
+$(FinalOutput)%.o: %.c
+	@echo_rede '构建文件: $<'
+	@echo_rede '调用: GCC C Compiler'
+	$(CC) -c $(OPTIMIZED_FLAGS) $(PUBLIC_CFLAGS) $(CFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	@echo_rede '完成构建: $<'
+	@echo_rede ' '	
+
+$(FinalOutput)%.o: %.cpp
+	@echo_rede '构建文件: $<'
+	@echo_rede '调用: GCC C Compiler'
+	$(CC) -c $(OPTIMIZED_FLAGS) $(PUBLIC_CFLAGS) $(CFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+	@echo_rede '完成构建: $<'
+	@echo_rede ' '	
+$(S_SRCS) $(C_SRCS) $(CXX_SRCS): dir
+
+# 其它目标
+clean:
+	-$(RM) $(FinalOutput)/
+	-@echo_rede ' '
+
+install:all
+	@date
+
+t:
+	@echo_rede $(SUBDIRS)
+	@echo_rede $(C_SRCS)
+	@echo_rede $(OBJS)
+	@echo_rede " "
+	
+	
+.PHONY: all clean install t
+
+
+-include 1
