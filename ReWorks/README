@@ -1,0 +1,6 @@
+# README
+
+注意
+
+* 执行 pthread_create 如果第一个参数 pthread_t 为 NULL，就会创建失败。通过返回值判断。
+* sem_init 默认初始化必须是 0 ，否则 sem_wait 直接返回
