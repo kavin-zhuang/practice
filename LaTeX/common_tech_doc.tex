@@ -1,0 +1,141 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fancyhdr} % not useful
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx} % \includegraphic{xxx.png}
+\usepackage{times}
+%\usepackage{indentfirst}
+\usepackage[colorlinks, linkcolor=blue, pdftex,bookmarksnumbered]{hyperref}
+\usepackage{blindtext} % test content
+\usepackage{lipsum} % test content
+\usepackage{titlesec} % define section style
+\usepackage[margin=2cm]{geometry}
+
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{1pt}
+\cfoot{Copyright \copyright\ 2017, Jinfeng Zhuang. All rights reserved.}
+\rfoot{\thepage}
+
+\setlength{\parindent}{0pt}
+
+\let\oldsection\section
+\renewcommand{\section}{\leftskip=2em \oldsection}
+\let\oldsubsection\subsection
+\renewcommand{\subsection}{\leftskip=2em \oldsubsection}
+\let\oldsubsubsection\subsubsection
+\renewcommand{\subsubsection}{\leftskip=2em \oldsubsubsection}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+backgroundcolor=\color{white},   % choose the background color
+basicstyle=\footnotesize\ttfamily,        % size of fonts used for the code
+columns=fullflexible,
+breaklines=true,                 % automatic line breaking only at whitespace
+captionpos=b,                    % sets the caption-position to bottom
+tabsize=4,
+commentstyle=\color{mygreen},    % comment style
+escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+keywordstyle=\color{blue},       % keyword style
+stringstyle=\color{mymauve}\ttfamily,     % string literal style
+frame=single,
+rulesepcolor=\color{red!20!green!20!blue!20},
+% identifierstyle=\color{red},
+language=c++,
+xleftmargin=3em
+}
+
+\title{Fingerprint on Cortex-M4}
+
+\author{Jinfeng Zhuang}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\thispagestyle{empty}
+
+\newpage
+
+\begin{abstract}
+To demostrate the product, we use Cortex-M4 to read data from ultrasonic fingureprint sample chip as a SPI master, then send processed data to PC on the USB-Device side.
+\end{abstract}
+
+\setcounter{page}{1}
+\pagenumbering{Roman}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\section{API}
+
+\subsection{spi\_send}
+\subsubsection{SYNOPSIS}
+\begin{lstlisting}[language=C]
+int spi_send(unsigned char *buffer, unsigned int length);
+\end{lstlisting}
+\subsubsection{DESCRIPTION}
+Synchronous send bytes to SPI Slaver.
+\subsubsection{PARAMETERS}
+None.
+\subsubsection{RETURN}
+Return -1 if send failed.
+\subsubsection{ERRORS}
+None.
+
+\subsection{spi\_recv}
+\subsubsection{SYNOPSIS}
+\begin{lstlisting}[language=C]
+int spi_recv(unsigned char *buffer, unsigned int length);
+\end{lstlisting}
+\subsubsection{DESCRIPTION}
+\subsubsection{PARAMETERS}
+None.
+\subsubsection{RETURN}
+Return -1 if send failed.\\
+Return 0 if there is no data.
+\subsubsection{ERRORS}
+None.
+
+\subsection{usb\_send}
+\subsubsection{SYNOPSIS}
+\begin{lstlisting}[language=C]
+int usb_send(unsigned char *buffer, unsigned int length);
+\end{lstlisting}
+\subsubsection{DESCRIPTION}
+Synchronous send bytes to USB Host.
+\subsubsection{PARAMETERS}
+None.
+\subsubsection{RETURN}
+Return -1 if send failed.
+\subsubsection{ERRORS}
+None.
+
+\subsection{usb\_recv}
+\subsubsection{SYNOPSIS}
+\begin{lstlisting}[language=C]
+int usb_recv(unsigned char *buffer, unsigned int length);
+\end{lstlisting}
+\subsubsection{DESCRIPTION}
+
+Asynchronous receive data in global buffer, which will be filled by USB interrupt handler.
+\subsubsection{PARAMETERS}
+None.
+\subsubsection{RETURN}
+Return -1 if recv failed.\\
+Return 0 if there is no data.
+\subsubsection{ERRORS}
+None.
+
+\section{Source Directory}
+
+\end{document}
