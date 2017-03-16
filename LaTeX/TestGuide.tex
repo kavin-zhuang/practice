@@ -1,0 +1,592 @@
+%
+% For rede release report
+%
+
+\documentclass[a4paper]{article}
+
+\usepackage{fancyhdr} % not useful
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx} % \includegraphic{xxx.png}
+\usepackage{times}
+%\usepackage{indentfirst}
+\usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, pdftex,bookmarksnumbered]{hyperref}
+\usepackage{blindtext} % test content
+\usepackage{lipsum} % test content
+\usepackage{titlesec} % define section style
+\usepackage[margin=2cm]{geometry}
+\usepackage{enumerate}
+\usepackage{mdwlist}
+
+\newtheorem{remark}{Remark}
+
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{1pt}
+\cfoot{\emph{Copyright \copyright\ 2017, NTESEC. All rights reserved.}}
+\rfoot{\thepage}
+
+\setlength{\parindent}{0pt}
+
+\let\oldsection\section
+\renewcommand{\section}{\leftskip=2em \oldsection}
+\let\oldsubsection\subsection
+\renewcommand{\subsection}{\leftskip=2em \oldsubsection}
+\let\oldsubsubsection\subsubsection
+\renewcommand{\subsubsection}{\leftskip=2em \oldsubsubsection}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+\lstset{ %
+backgroundcolor=\color{white},   % choose the background color
+basicstyle=\footnotesize\ttfamily,        % size of fonts used for the code
+columns=fullflexible,
+breaklines=true,                 % automatic line breaking only at whitespace
+captionpos=b,                    % sets the caption-position to bottom
+tabsize=2,
+commentstyle=\color{mygreen},    % comment style
+escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+keywordstyle=\color{blue},       % keyword style
+stringstyle=\color{mymauve}\ttfamily,     % string literal style
+frame=single,
+rulesepcolor=\color{red!20!green!20!blue!20},
+% identifierstyle=\color{red},
+language=c++,
+xleftmargin=3em
+}
+
+%\includegraphics[scale=0.2]{rede.png} 
+
+\title{Reworks Test Guide}
+
+\author{Jinfeng Zhuang \\ \\ jinfeng.zhuang@aliyun.com}
+\date{}
+
+%=====================================================================================
+
+\begin{document}
+
+\maketitle
+
+\vspace{130pt}
+
+\begin{center}
+%\includegraphics[scale=0.5]{timthumb.jpg}
+\end{center}
+
+\thispagestyle{empty}
+
+%=====================================================================================
+\newpage
+\setcounter{page}{1}
+\pagenumbering{Roman}
+
+\tableofcontents
+
+%=====================================================================================
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\section{Introduction}
+
+All the testpoint is a measure of data transfer, and they are based on high-precision timer.\\
+Test object access can be directly mode or user interface mode. For different developers.\\
+Test benifite:
+
+support demos of how to use the application interface.
+
+support a model to how to write a model release report.
+
+%=====================================================================================
+
+\section{What-Why-How}
+
+Test is a method for user to learn the supported stack and the interface. A large software architecture is divided into different module on different layers, each module should be a test point, and the developer of the module has the responsibility test it's dependent modules, and support a test report to it's users, which we called the theoretical value.
+
+Each module test include function test and time token test, and heap, stack allocation test, may have a pressure test.
+
+The contents are orgnized from different source, such as vxWorks test benches.
+
+If do performance test, you should disable the interrupt.
+
+While do test, u can only use the related system resource, and put the final result to console.
+
+Below is a simple diagram for embeded system architecture:\\
+
+\begin{tabular}{|c|c|c|}
+\hline \multicolumn{3}{|c|}{Product}\\
+\hline Socket & File System & Graphics\\
+\hline SymbolTable & SHELL & Log\\
+\hline\multicolumn{3}{|c|}{POSIX}\\
+\hline\multicolumn{3}{|c|}{OS}\\
+\hline\multicolumn{2}{|c|}{BSP} & CSP\\
+\hline\multicolumn{3}{|c|}{C Library}\\
+\hline
+\end{tabular}
+
+%=====================================================================================
+\newpage
+\section{Code Rules}
+
+This section describe how to write a test program, how to get the result automatively. The destination of test should be automative. After machine auto run, the result will give with a paper.
+
+A high-pricision timer is required to measure the interfaces' time-token.
+
+%=====================================================================================
+\newpage
+\section{Collection}
+
+\subsection{Realtime Performance}
+\subsection{Time}
+
+%=====================================================================================
+\newpage
+\section{C Library}
+
+C library is supported by tool chain, which is the basic mechisiam for embeded system, more basic is assembly instructions.
+
+\subsection{common}
+
+
+
+\subsection{IO}
+
+
+\subsection{string}
+
+
+\subsubsection{strcpy}
+
+
+\subsection{wchar}
+
+
+\subsection{math}
+
+
+\subsection{signal}
+
+
+\subsection{locale}
+
+
+\subsection{varlist}
+
+
+\subsection{time}
+
+
+\subsection{syscall}
+
+
+\subsection{setjmp}
+
+
+\subsection{hash}
+
+
+
+\subsection{memory}
+
+
+\subsubsection{memalign}
+
+
+\subsubsection{memmove}
+
+
+\subsubsection{memset}
+
+%=====================================================================================
+\newpage
+\section{Core Supported Package}
+
+\subsection{High-Pricision Timer}
+\begin{tabular}{|c|c|c|}
+\hline Interval\\
+\hline Pricision\\
+\hline CPU freq(Delay with I-Cache)\\
+\hline Overflow Handler\\
+\hline Interrupt Execution Time\\
+\hline tickAnnounce\\
+\hline
+\end{tabular}
+\subsection{Clock}
+get and set system clock.
+\subsection{Cache}
+
+
+\subsection{MMU}
+
+
+\subsection{Float}
+
+
+\subsection{CPU Frequence}
+
+
+\subsection{Barriar}
+
+
+
+%=====================================================================================
+\newpage
+\section{Board Supported Package}
+
+Include I/O interface and block interface.
+
+\subsection{Flash Directly Access Baudrate}
+
+
+\subsection{Serial ioctl interface and IO test}
+
+
+\subsection{RTC}
+
+%=====================================================================================
+\newpage
+\section{Operation System}
+
+\subsection{Synchrone Mechanism}
+x
+
+\subsubsection{semaphore}
+x
+
+\subsection{Multicore Synchrone Mechanism}
+
+x
+\subsubsection{spinlock}
+x
+
+\subsubsection{semaphore}
+x
+
+\subsection{Task}
+x
+
+\subsubsection{task switch}
+x
+
+\subsubsection{task switch time taken}
+x
+
+\subsubsection{task switch between multicores}
+
+x
+\subsubsection{task sequence control}
+x
+
+\subsubsection{task execution time \& sleep time}
+
+x
+\subsection{Task Sequence Control}
+x
+
+\subsection{Exception Response}
+x
+
+
+\subsubsection{Limit of Interrut Lock}
+
+x
+\subsection{System Call}
+x
+
+\subsubsection{Sleep}
+
+x
+\subsubsection{Software Watchdog time token}
+
+x
+
+%=====================================================================================
+\newpage
+\section{POSIX}
+x
+
+
+\subsection{Timer}
+x
+
+\subsection{Semaphore}
+x
+
+\subsection{Thread}
+
+x
+\subsection{rwlock}
+
+x
+\subsection{Mutex}
+x
+
+\subsection{Message Queue}
+
+x
+\subsection{var}
+
+x
+\subsection{key}
+
+x
+\subsection{cond}
+x
+
+\subsection{mpart}
+x
+
+\subsection{watchdog}
+
+x
+
+%=====================================================================================
+\newpage
+\section{vxWorks Compatible Layer}
+x
+
+\subsection{float benchmark}
+x
+
+\subsection{heap}
+
+x
+\subsection{message queue}
+x
+
+\subsection{semaphore B/C/M performance}
+x
+
+
+\subsection{task}
+x
+
+\subsubsection{manager}
+
+x
+
+priority reserve test is a very important point.
+
+\subsubsection{hook}
+x
+
+\subsubsection{var}
+
+x
+\subsubsection{info}
+x
+
+
+\subsection{pipe}
+x
+\subsubsection{create}
+
+x
+\subsubsection{delete}
+
+x
+\subsubsection{read/write}
+x
+
+
+\subsection{watchdog}
+
+x
+
+\subsection{clock}
+x
+
+\subsubsection{get}
+x
+
+\subsubsection{set}
+x
+
+\subsubsection{notify}
+x
+
+
+\subsection{timer}
+x
+
+\subsubsection{connect}
+x
+
+\subsubsection{cancel}
+
+x
+
+\subsection{interrupt}
+x
+
+\subsubsection{context}
+
+x
+\subsubsection{nest}
+
+x
+\subsubsection{relation}
+x
+
+
+\subsection{memory}
+
+x
+\subsubsection{memory device operation}
+
+x
+\subsubsection{interface}
+x
+
+\subsubsection{partition}
+x
+
+\subsubsection{manager}
+x
+
+\subsubsection{mem pool}
+x
+
+\subsubsection{mem share}
+
+x
+
+\subsection{errno}
+x
+
+\subsubsection{get}
+
+x
+\subsubsection{set}
+x
+
+
+\subsection{common}
+
+x
+\subsubsection{task event}
+
+x
+\subsubsection{semaphore}
+x
+
+\subsubsection{message queue}
+x
+
+
+\subsection{watchdog time token}
+
+x
+\subsection{Synchrone}
+
+x
+\subsection{ CPU}
+
+x
+\subsubsection{ CPU affinity}
+x
+
+\subsubsection{ scheduler on SMP}
+
+x
+\subsubsection{ CPU Lock}
+x
+
+\subsubsection{ CPU On/Off}
+x
+
+
+
+%=====================================================================================
+\newpage
+\section{File System}
+
+x
+
+\subsection{fread, fwrite on different storage media}
+x
+
+
+%=====================================================================================
+\newpage
+\section{Socket}
+
+x
+
+\subsection{TCP}
+
+x
+\subsection{UDP}
+x
+
+\subsection{Broadcast}
+
+x
+\subsection{Multicast}
+
+x
+\subsection{select}
+x
+
+\subsection{route}
+x
+
+\subsection{ARP}
+x
+
+\subsection{ICMP: Ping with Big Package}
+
+x
+
+%=====================================================================================
+\newpage
+\section{Graphics}
+
+see SVN test folder.
+
+%=====================================================================================
+\newpage
+\section{Product}
+
+x
+
+\subsection{boot time}
+
+x
+\subsection{gtk dma}
+x
+
+\subsection{monitor: cpuuse}
+
+x
+\subsection{fsinfo}
+x
+
+\subsection{meminfo}
+x
+
+\subsection{memory leak test}
+
+x
+\subsection{task meminfo}
+
+x
+\subsection{sem stat}
+
+x
+\subsection{stackinfo}
+
+x
+
+%=====================================================================================
+\newpage
+\section{Reference}
+
+
+EEMBC: it support a bench test and reference data.\\
+IEEE\\
+POSIX\\
+MISRC-2004\\
+
+\end{document}

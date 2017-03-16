@@ -1,0 +1,61 @@
+\documentclass{beamer}
+
+\usepackage{beamerthemesplit}
+
+\title{FT1500A Halt} 
+\author{Jinfeng Zhuang} 
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage} 
+
+\frame {
+\frametitle{BUG Description}
+\begin{enumerate}[-]
+\item The CPU seems to enter an unknown exception, which is not in the vector table. By reading the ARMv8 architecture manual, we are very hard to find it. So, we also doubt on the IP design.
+\item It occurs anywhere and anytime, so the effect is global, we are sure that the BUG is in Core0 configuration, e.g. MMU, Cache, Branch Prediction... Especially the accelerated functions.
+\item It can not response to the CTI request, which is launched by DSTREAM. Core is halted, can't do anything but I think it's alive. Maybe in a situation like while(1).
+\item LS1043A can't recur this BUG.
+\item Linux64 support L2 cache, we also doubt on it. It is not implemented in Reworks.
+\end{enumerate}
+}
+
+\frame {
+\frametitle{How to recur the BUG}
+\begin{enumerate}[(1)]
+\item continuously UDP send \& recv on loop interface: 127.0.0.1.
+\item continuously input empty function in shell(do it by script).
+\end{enumerate}
+}
+
+\frame {
+\frametitle{Direct Answer \& Solution}
+CPU has a accelerate function called \textbf{Speculative Instruction Fetch}, if it fetch from device area, it will cause Core halted.
+\begin{enumerate}[(a)]
+\item Set PXN bit = 1 in MMU table's device attribute, and set domain as client to check the bit. To make the speculative instruction fetch can't fetch from device area.
+\item Additionally, modify the cpsr/spsr copy in context switch. They will throw the key flags if copy without \textbf{\_cxsf} suffix.
+\end{enumerate}
+}
+
+\frame {
+\frametitle{Explaination}
+Each core has a long pipeline to store instructions, include some branches. For accelaration, a mechanism called speculative instruction fetch will select the \emph{most probable} branch and load the rest of instructions from there. But it not means that these instructions will be executed.
+
+Above behavior is normal, but if prefetch from \textbf{Device Area}, it may cause fault. In ARMv8 architecture manual, it says that designer should  handler it. I think FT1500A doesn't handle it and then makes core halted, enter into a unknown situation.
+}
+
+\frame {
+\frametitle{More about the Core design}
+One optimization of ARMv7/ARMv8 is instruction re-order, like this:\\
+str r0, [r1] ; A\\
+str r2, [r3] ; B\\
+In classic mode, PE should be execute B after A. But now, as A and B has no effect with each other, PE will execute them synchronously.
+\begin{enumerate}[-]
+\item ISB clear the pipeline.
+\item DSB wait for operations done for this core, e.g. Mem,TLB,BranchPrediction,Cache...
+\item DMB wait for gloabl resource sync to all other cores, for just Memory
+\end{enumerate}
+}
+
+\end{document}
