@@ -6,15 +6,20 @@
 \usepackage{graphicx} % \includegraphic{xxx.png}
 \usepackage{times}
 %\usepackage{indentfirst}
-\usepackage[colorlinks, linkcolor=blue, pdftex,bookmarksnumbered]{hyperref}
+\usepackage[colorlinks, linkcolor=blue, anchorcolor=blue, citecolor=blue, pdftex,bookmarksnumbered]{hyperref}
 \usepackage{blindtext} % test content
 \usepackage{lipsum} % test content
 \usepackage{titlesec} % define section style
 \usepackage[margin=2cm]{geometry}
+\usepackage{enumerate}
+\usepackage{mdwlist}
+\usepackage{bytefield}
+
+\newtheorem{remark}{Remark}
 
 \pagestyle{fancy}
 \renewcommand{\footrulewidth}{1pt}
-\cfoot{Copyright \copyright\ 2017, Jinfeng Zhuang. All rights reserved.}
+\cfoot{\emph{Copyright \copyright\ 2017, Jinfeng Zhuang. All rights reserved.}}
 \rfoot{\thepage}
 
 \setlength{\parindent}{0pt}
@@ -35,7 +40,7 @@ basicstyle=\footnotesize\ttfamily,        % size of fonts used for the code
 columns=fullflexible,
 breaklines=true,                 % automatic line breaking only at whitespace
 captionpos=b,                    % sets the caption-position to bottom
-tabsize=4,
+tabsize=2,
 commentstyle=\color{mygreen},    % comment style
 escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
 keywordstyle=\color{blue},       % keyword style
@@ -47,95 +52,26 @@ language=c++,
 xleftmargin=3em
 }
 
-\title{Fingerprint on Cortex-M4}
+\title{MPC8360 Release Notes}
 
-\author{Jinfeng Zhuang}
-\date{\today}
+\author{Jinfeng Zhuang \\ jinfeng.zhuang@aliyun.com}
+\date{}
 
 \begin{document}
 
 \maketitle
 
-\thispagestyle{empty}
+%=====================================================================
+\section{Introduction}
 
-\newpage
 
-\begin{abstract}
-To demostrate the product, we use Cortex-M4 to read data from ultrasonic fingureprint sample chip as a SPI master, then send processed data to PC on the USB-Device side.
-\end{abstract}
+%=====================================================================
+\section{References}
 
-\setcounter{page}{1}
-\pagenumbering{Roman}
-
-\newpage
-
-\tableofcontents
-
-\newpage
-
-\setcounter{page}{1}
-\pagenumbering{arabic}
-
-\section{API}
-
-\subsection{spi\_send}
-\subsubsection{SYNOPSIS}
-\begin{lstlisting}[language=C]
-int spi_send(unsigned char *buffer, unsigned int length);
-\end{lstlisting}
-\subsubsection{DESCRIPTION}
-Synchronous send bytes to SPI Slaver.
-\subsubsection{PARAMETERS}
-None.
-\subsubsection{RETURN}
-Return -1 if send failed.
-\subsubsection{ERRORS}
-None.
-
-\subsection{spi\_recv}
-\subsubsection{SYNOPSIS}
-\begin{lstlisting}[language=C]
-int spi_recv(unsigned char *buffer, unsigned int length);
-\end{lstlisting}
-\subsubsection{DESCRIPTION}
-\subsubsection{PARAMETERS}
-None.
-\subsubsection{RETURN}
-Return -1 if send failed.\\
-Return 0 if there is no data.
-\subsubsection{ERRORS}
-None.
-
-\subsection{usb\_send}
-\subsubsection{SYNOPSIS}
-\begin{lstlisting}[language=C]
-int usb_send(unsigned char *buffer, unsigned int length);
-\end{lstlisting}
-\subsubsection{DESCRIPTION}
-Synchronous send bytes to USB Host.
-\subsubsection{PARAMETERS}
-None.
-\subsubsection{RETURN}
-Return -1 if send failed.
-\subsubsection{ERRORS}
-None.
-
-\subsection{usb\_recv}
-\subsubsection{SYNOPSIS}
-\begin{lstlisting}[language=C]
-int usb_recv(unsigned char *buffer, unsigned int length);
-\end{lstlisting}
-\subsubsection{DESCRIPTION}
-
-Asynchronous receive data in global buffer, which will be filled by USB interrupt handler.
-\subsubsection{PARAMETERS}
-None.
-\subsubsection{RETURN}
-Return -1 if recv failed.\\
-Return 0 if there is no data.
-\subsubsection{ERRORS}
-None.
-
-\section{Source Directory}
+\begin{itemize*}
+\item \emph{PowerPC Microprocessor Family-The Programmer Reference Guide}
+\item \emph{Programming Environments Manual for 32-Bit Implementations of the PowerPC Architecture}
+\item \emph{Application Note: A Minimal PowerPC Boot Sequence for Executing Compiled C Programs}
+\end{itemize*}
 
 \end{document}
